@@ -13,6 +13,7 @@ df = pd.read_csv('data.csv', sep=';')
 for ndx,i in df.iterrows():
     cpf = '00000000000' + str(df['cpf'][ndx])
     cpf = cpf[len(cpf)-11:]
+    # essa URL faz com que os dados já cheguem carregados na página
     url = f'http://www2.copasa.com.br/servicos/2avia2/msginicial.asp?visor={cpf}&Opcao=CPF'
     
     time.sleep(0.2)
@@ -24,6 +25,8 @@ for ndx,i in df.iterrows():
     if 'ATENÇÃO' in page:
         pass
     else:    
+        
+        # como os dados já estão na página, é soh clicar em pesquisar
         driver.find_element_by_name('BtnSubmit').click()
         
         result_len = len(driver.find_elements_by_xpath('/html/body/center/table/tbody/tr/td/form/table[2]/tbody//tr'))   
@@ -41,6 +44,7 @@ for ndx,i in df.iterrows():
                 
                 time.sleep(0.1)
                 
+                # Clica no detalhe da conta para pegar o mes referencia
                 driver.find_elements_by_xpath(f'/html/body/center/table/tbody/tr/td/form/table[2]/tbody/tr[{ii}]/td[1]/a')[0].click()
                 
                 time.sleep(0.1)
@@ -55,6 +59,7 @@ for ndx,i in df.iterrows():
                     
                     df_contas = pd.read_html(table.get_attribute('outerHTML'))
                     
+                    # para todas faturas abertas pinta o insert na tela
                     for j in df_contas[0].iterrows():
                         ref = j[1][1]
                         if re.match('\d{2}\/\d{4}', str(ref)):
